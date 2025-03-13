@@ -1,6 +1,12 @@
 import { getAllPosts, getPostBySlug, Post } from "../../../lib/posts";
 import { notFound } from "next/navigation";
 
+// Define the type for params
+interface Params {
+  slug: string;
+}
+
+// Generate static parameters for pre-rendering
 export async function generateStaticParams() {
   const posts = getAllPosts();
   return posts.map((post) => ({
@@ -8,16 +14,14 @@ export async function generateStaticParams() {
   }));
 }
 
-export default async function PostPage({
-  params,
-}: {
-  params: { slug: string };
-}) {
+// Page component with proper async handling of params
+export default async function PostPage({ params }: { params: Promise<Params> }) {
+  const resolvedParams = await params; // Await the params Promise
   let post: Post;
   try {
-    post = getPostBySlug(params.slug);
+    post = getPostBySlug(resolvedParams.slug); // Use resolved params
   } catch (error) {
-    notFound(); // Redirects to 404 if the post isn’t found
+    notFound(); // Redirect to 404 if the post isn’t found
   }
 
   return (
