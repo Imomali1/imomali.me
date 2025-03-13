@@ -20,11 +20,14 @@ export function getAllPosts(): Post[] {
     const fileContents = fs.readFileSync(fullPath, "utf8");
     const { data, content } = matter(fileContents);
 
+    // Ensure content is a string by using marked synchronously
+    const htmlContent = marked.parse(content) as string;
+
     return {
       slug,
-      title: data.title,
-      date: data.date,
-      content: marked(content),
+      title: data.title as string,
+      date: data.date as string,
+      content: htmlContent,
     };
   });
 
@@ -36,10 +39,13 @@ export function getPostBySlug(slug: string): Post {
   const fileContents = fs.readFileSync(fullPath, "utf8");
   const { data, content } = matter(fileContents);
 
+  // Ensure content is a string
+  const htmlContent = marked.parse(content) as string;
+
   return {
     slug,
-    title: data.title,
-    date: data.date,
-    content: marked(content),
+    title: data.title as string,
+    date: data.date as string,
+    content: htmlContent,
   };
 }
